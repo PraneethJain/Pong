@@ -1,4 +1,3 @@
-from time import sleep
 from settings import *
 from stick import Player, Computer
 from ball import Ball
@@ -40,13 +39,13 @@ class Game:
         if self.ball.rect.right >= SCREEN_WIDTH:
             self.score_player += 1
             self.player_score.update(self.score_player)
-            sleep(0.5)
+            pg.time.delay(250)
             self.reset()
             
         if self.ball.rect.left <=0:
             self.score_computer += 1
             self.computer_score.update(self.score_computer)
-            sleep(0.5)
+            pg.time.delay(250)
             self.reset()
         
     def run(self):
