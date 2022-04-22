@@ -1,7 +1,7 @@
 from settings import *
 import pygame as pg
 import imports
-from random import randrange
+from random import randrange, choice
 from math import sin, cos, pi
 from time import sleep
 
@@ -17,7 +17,7 @@ class Ball(pg.sprite.Sprite):
         self.start()
         
     def start(self):
-        theta = randrange(0, 360)*pi/180
+        theta = choice([randrange(30,60), randrange(120,150), randrange(210,240), randrange(300, 330)])*pi/180
         self.velocity.x = BALL_SPEED*cos(theta)
         self.velocity.y = BALL_SPEED*sin(theta)
     
