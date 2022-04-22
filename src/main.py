@@ -2,6 +2,7 @@ from time import sleep
 from settings import *
 from stick import Player, Computer
 from ball import Ball
+from scores import Score
 import pygame as pg
 import imports
 import sys
@@ -16,8 +17,11 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.players_group = pg.sprite.Group()
         self.ball_group = pg.sprite.GroupSingle()
+        self.scores = pg.sprite.Group()
         self.player = Player((SCREEN_WIDTH/50, SCREEN_HEIGHT/2), self.players_group, self.all_sprites)
         self.computer = Computer((49*SCREEN_WIDTH/50, SCREEN_HEIGHT/2), self.players_group, self.all_sprites)
+        self.player_score = Score(True,self.scores)
+        self.computer_score = Score(False, self.scores)
         self.ball = Ball(self.ball_group, self.all_sprites)
         self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pg.time.Clock()
@@ -35,14 +39,14 @@ class Game:
             
         if self.ball.rect.right >= SCREEN_WIDTH:
             self.score_player += 1
-            print(f"You: {self.score_player}\nComputer: {self.score_computer}")
-            sleep(1)
+            self.player_score.update(self.score_player)
+            sleep(0.5)
             self.reset()
             
         if self.ball.rect.left <=0:
             self.score_computer += 1
-            print(f"You: {self.score_player}\nComputer: {self.score_computer}")
-            sleep(1)
+            self.computer_score.update(self.score_computer)
+            sleep(0.5)
             self.reset()
         
     def run(self):
@@ -50,6 +54,8 @@ class Game:
             
             self.screen.fill("black")
             self.handle_events(pg.event.get())
+            
+            self.scores.draw(self.screen)
             
             pg.draw.line(self.screen, "white", (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT))
             self.all_sprites.update()
