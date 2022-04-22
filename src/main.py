@@ -1,3 +1,4 @@
+from time import sleep
 from settings import *
 from stick import Player, Computer
 from ball import Ball
@@ -21,8 +22,9 @@ class Game:
         self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pg.time.Clock()
         self.FPS = FPS
+        self.score_player = 0
+        self.score_computer = 0
 
-    
     def collide_check(self):
         if pg.sprite.spritecollideany(self.ball, self.players_group):
             if self.ball.velocity.x > 0:
@@ -31,8 +33,17 @@ class Game:
                 self.ball.velocity.x -= FORCE
             self.ball.velocity.x *= -1
             
-        if self.ball.rect.right >= SCREEN_WIDTH or self.ball.rect.left <=0:
-            print("endeded")
+        if self.ball.rect.right >= SCREEN_WIDTH:
+            self.score_player += 1
+            print(f"You: {self.score_player}\nComputer: {self.score_computer}")
+            sleep(1)
+            self.reset()
+            
+        if self.ball.rect.left <=0:
+            self.score_computer += 1
+            print(f"You: {self.score_player}\nComputer: {self.score_computer}")
+            sleep(1)
+            self.reset()
         
     def run(self):
         while True:
@@ -40,11 +51,11 @@ class Game:
             self.screen.fill("black")
             self.handle_events(pg.event.get())
             
+            pg.draw.line(self.screen, "white", (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT))
             self.all_sprites.update()
             self.collide_check()
             self.computer.control(self.ball.rect.center)
             self.all_sprites.draw(self.screen)
-            
             
             self.clock.tick(self.FPS)
             pg.display.update()
@@ -55,6 +66,14 @@ class Game:
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
+                
+    def reset(self):
+        self.all_sprites = pg.sprite.Group()
+        self.players_group = pg.sprite.Group()
+        self.ball_group = pg.sprite.GroupSingle()
+        self.player = Player((SCREEN_WIDTH/50, SCREEN_HEIGHT/2), self.players_group, self.all_sprites)
+        self.computer = Computer((49*SCREEN_WIDTH/50, SCREEN_HEIGHT/2), self.players_group, self.all_sprites)
+        self.ball = Ball(self.ball_group, self.all_sprites)
                 
 if __name__ == "__main__":
     game = Game()
