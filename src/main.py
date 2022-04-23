@@ -16,6 +16,7 @@ class Game:
         pg.display.set_icon(imports.icon)
         self.scene = Scene.main_menu
         self.create_main_menu()
+        self.create_pause_menu()
         self.all_sprites = pg.sprite.Group()
         self.players_group = pg.sprite.Group()
         self.ball_group = pg.sprite.GroupSingle()
@@ -63,6 +64,9 @@ class Game:
                     
                 case Scene.run:
                     self.run()
+                    
+                case Scene.pause_menu:
+                    self.pause_menu()
 
             self.clock.tick(self.FPS)
             pg.display.update()
@@ -76,7 +80,7 @@ class Game:
         self.version = imports.roboto_light.render(f"V{imports.VERSION}", True, "white")
     
     def main_menu(self):
-        self.screen.blit(imports.background, (0, 0))
+        self.screen.blit(imports.main_bg, (0, 0))
         self.screen.blit(self.title, (SCREEN_WIDTH//2-self.title.get_width()//2, SCREEN_HEIGHT//10))
         self.screen.blit(self.version, (0, SCREEN_HEIGHT-self.version.get_height()))
         self.source_link.update(self.screen)
@@ -98,12 +102,16 @@ class Game:
         if self.source_link.pressed:
             webbrowser.open("https://github.com/PraneethJain/Pong")
             pg.time.delay(250)
+    
+    def pause_to_run(self):
+        for alpha in range(100):
+            self.current_screen.set_alpha(alpha/2)
+            self.screen.blit(self.current_screen, (0,0))
+            pg.display.update()
+        self.scene = Scene.run
         
     def run(self):
-
         self.screen.fill("black")
-        
-        
         self.scores.draw(self.screen)
         
         pg.draw.line(self.screen, "white", (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT))
@@ -111,16 +119,33 @@ class Game:
         self.collide_check()
         self.computer.control(self.ball.rect.center)
         self.all_sprites.draw(self.screen)
+    
+    def create_pause_menu(self):
+        pass
         
+    def run_to_pause(self):
+        self.pause_bg_alpha=0
+        self.scene = Scene.pause_menu
         
-            
-    @staticmethod
-    def handle_events(events: list[pg.event.Event]):
+    def pause_menu(self):
+        if self.pause_bg_alpha<255:
+            imports.pause_bg.set_alpha(self.pause_bg_alpha)
+            self.pause_bg_alpha+=1
+        self.screen.blit(imports.pause_bg, (0, 0))
+        
+    def handle_events(self, events: list[pg.event.Event]):
         for event in events:
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
                 
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    if self.scene == Scene.run:
+                        self.current_screen = self.screen.copy()
+                        self.run_to_pause()
+                    elif self.scene == Scene.pause_menu:
+                        self.pause_to_run()
     def reset(self):
         self.all_sprites = pg.sprite.Group()
         self.players_group = pg.sprite.Group()
