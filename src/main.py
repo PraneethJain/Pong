@@ -25,7 +25,7 @@ class Game:
         self.player_score = Score(True,self.scores)
         self.computer_score = Score(False, self.scores)
         self.ball = Ball(self.ball_group, self.all_sprites)
-        self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen = imports.screen
         self.clock = pg.time.Clock()
         self.FPS = FPS
         self.score_player = 0
@@ -76,7 +76,7 @@ class Game:
         self.version = imports.roboto_light.render(f"V{imports.VERSION}", True, "white")
     
     def main_menu(self):
-        self.screen.fill("black")
+        self.screen.blit(imports.background, (0, 0))
         self.screen.blit(self.title, (SCREEN_WIDTH//2-self.title.get_width()//2, SCREEN_HEIGHT//10))
         self.screen.blit(self.version, (0, SCREEN_HEIGHT-self.version.get_height()))
         self.source_link.update(self.screen)
