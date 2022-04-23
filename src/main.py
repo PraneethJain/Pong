@@ -10,7 +10,6 @@ import sys
 class Game:
     
     def __init__(self):
-        pg.init()
         pg.display.set_caption("Pong")
         pg.display.set_icon(imports.icon)
         self.all_sprites = pg.sprite.Group()

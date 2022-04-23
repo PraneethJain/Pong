@@ -5,8 +5,7 @@ class Score(pg.sprite.Sprite):
     
     def __init__(self, player: bool, *groups: pg.sprite.AbstractGroup) -> None:
         super().__init__(*groups)
-        self.size = int(40*SCREEN_WIDTH/1280)
-        self.font = pg.font.Font(resource_path("assets/fonts/Roboto-Bold.ttf"), self.size)
+        self.font = roboto
         self.image = self.font.render("0",True,"white")
         if player:
             self.rect = self.image.get_rect(topright=(14/15*SCREEN_WIDTH/2,SCREEN_HEIGHT/40))
