@@ -4,17 +4,29 @@ from imports import *
 class Stick(pg.sprite.Sprite):
     def __init__(self, pos, *groups: pg.sprite.AbstractGroup) -> None:
         super().__init__(*groups)
+        self.pos = pos
         self.image = pg.Surface((SCREEN_WIDTH/54, SCREEN_HEIGHT/6))
         self.image.fill((255,255,255))
-        self.rect = self.image.get_rect(center = pos)
+        self.rect = self.image.get_rect(center = self.pos)
         self.speed = PLAYER_SPEED
         self.dir = pg.math.Vector2()
+        
+    def reset(self):
+        self.rect.center = self.pos
         
     def bounds(self):
         if self.rect.top <= 0:
             self.rect.top = 0
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
+            
+    def enlarge(self):
+        scale_factor = 1.1
+        self.image = pg.Surface((self.image.get_width(),self.image.get_height()*scale_factor))
+        self.image.fill((255, 255, 255))
+        old_center = self.rect.center
+        self.rect.h *= scale_factor
+        self.rect.center = old_center
 
 
 class Player(Stick):

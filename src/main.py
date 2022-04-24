@@ -39,19 +39,31 @@ class Game:
             else:
                 self.ball.velocity.x -= FORCE
             self.ball.velocity.x *= -1
-            
+    
+    def score(self):
         if self.ball.rect.right >= SCREEN_WIDTH:
             self.score_player += 1
+            # self.computer.enlarge()
             self.player_score.update(self.score_player)
             pg.time.delay(250)
             self.reset()
             
         if self.ball.rect.left <=0:
             self.score_computer += 1
+            # self.player.enlarge()
             self.computer_score.update(self.score_computer)
             pg.time.delay(250)
             self.reset()
-    
+            
+        if self.score_player == 1:
+            self.status = "win"
+            self.create_game_over()
+            self.scene = Scene.game_over
+        elif self.score_computer == 1:
+            self.status = "lose"
+            self.create_game_over()
+            self.scene = Scene.game_over
+
     def scene_manager(self):
         while True:
             
@@ -67,16 +79,19 @@ class Game:
                     
                 case Scene.pause_menu:
                     self.pause_menu()
+                    
+                case Scene.game_over:
+                    self.game_over()
 
             self.clock.tick(self.FPS)
             pg.display.update()
 
     def create_main_menu(self):
-        self.play_button = Button("Play", (SCREEN_WIDTH//2, SCREEN_HEIGHT//3))
-        self.settings_button = Button("Settings", (SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
-        self.exit_button = Button("Exit", (SCREEN_WIDTH//2, 2*SCREEN_HEIGHT//3))
+        self.play_button = Button("Play", (SCREEN_WIDTH//2, SCREEN_HEIGHT//3), (17, 138, 178))
+        self.settings_button = Button("Settings", (SCREEN_WIDTH//2, SCREEN_HEIGHT//2), (17, 138, 178))
+        self.exit_button = Button("Exit", (SCREEN_WIDTH//2, 2*SCREEN_HEIGHT//3), (17, 138, 178))
         self.source_link = Link("https://github.com/PraneethJain/Pong", bottomright=(SCREEN_WIDTH, SCREEN_HEIGHT)) 
-        self.title = imports.ape_font.render("Pong!", True, "blue")
+        self.title = imports.ape_font.render("Pong!", True, (239, 71, 111))
         self.version = imports.roboto_light.render(f"V{imports.VERSION}", True, "white")
     
     def main_menu(self):
@@ -104,8 +119,8 @@ class Game:
             pg.time.delay(250)
     
     def pause_to_run(self):
-        for alpha in range(100):
-            self.current_screen.set_alpha(alpha/2)
+        for alpha in range(200):
+            self.current_screen.set_alpha(alpha)
             self.screen.blit(self.current_screen, (0,0))
             pg.display.update()
         self.scene = Scene.run
@@ -117,9 +132,29 @@ class Game:
         pg.draw.line(self.screen, "white", (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT))
         self.all_sprites.update()
         self.collide_check()
+        self.score()
         self.computer.control(self.ball.rect.center)
         self.all_sprites.draw(self.screen)
     
+    def create_game_over(self):
+        self.over_surf = imports.thorn_font.render(f"You {self.status}", True, (204, 255, 255))
+        self.score_title = imports.roboto.render("Score", True, (255, 255, 255))
+        self.score_surf = imports.roboto.render(f"{self.score_player}-{self.score_computer}", True, (255, 255, 255))
+        self.restart_button = Button("Restart", color="white")
+    
+    def game_over(self):
+        self.screen.fill("black")
+        self.screen.blit(self.over_surf, (SCREEN_WIDTH/2-self.over_surf.get_width()/2, SCREEN_HEIGHT/20))
+        self.screen.blit(self.score_title, (SCREEN_WIDTH/2-self.score_title.get_width()/2, 14*SCREEN_HEIGHT/20))
+        self.screen.blit(self.score_surf, (SCREEN_WIDTH/2 - self.score_surf.get_width()/2, 16*SCREEN_HEIGHT/20))
+        self.restart_button.update(self.screen)
+        if self.restart_button.pressed:
+            self.reset()
+            self.score_player = 0
+            self.score_computer = 0
+            self.player_score.update(self.score_player)
+            self.computer_score.update(self.score_computer)
+            self.scene = Scene.run
     def create_pause_menu(self):
         pass
         
@@ -147,12 +182,10 @@ class Game:
                     elif self.scene == Scene.pause_menu:
                         self.pause_to_run()
     def reset(self):
-        self.all_sprites = pg.sprite.Group()
-        self.players_group = pg.sprite.Group()
         self.ball_group = pg.sprite.GroupSingle()
-        self.player = Player((SCREEN_WIDTH/50, SCREEN_HEIGHT/2), self.players_group, self.all_sprites)
-        self.computer = Computer((49*SCREEN_WIDTH/50, SCREEN_HEIGHT/2), self.players_group, self.all_sprites)
-        self.ball = Ball(self.ball_group, self.all_sprites)
+        self.player.reset()
+        self.computer.reset()
+        self.ball.__init__()
                 
 if __name__ == "__main__":
     game = Game()
