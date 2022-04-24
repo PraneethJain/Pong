@@ -57,11 +57,11 @@ class Game:
             pg.time.delay(250)
             self.reset()
             
-        if self.score_player == 5:
+        if self.score_player == SCORE_TO_WIN:
             self.status = "win"
             self.create_game_over()
             self.scene = Scene.game_over
-        elif self.score_computer == 5:
+        elif self.score_computer == SCORE_TO_WIN:
             self.status = "lose"
             self.create_game_over()
             self.scene = Scene.game_over
@@ -158,7 +158,7 @@ class Game:
     def create_game_over(self):
         self.over_surf = imports.thorn_font.render(f"You {self.status}", True, (164, 22, 26))
         self.score_title = imports.roboto.render("Score", True, (229, 229, 229))
-        self.score_surf = imports.roboto.render(f"{self.score_player}-{self.score_computer}", True, (229, 229, 229))
+        self.score_surf = imports.roboto.render(f"{self.score_player} - {self.score_computer}", True, (229, 229, 229))
         self.restart_button = Button("Restart", color=(252, 163, 17))
     
     def game_over(self):
@@ -222,6 +222,7 @@ class Game:
                         self.run_to_pause()
                     elif self.scene == Scene.pause_menu:
                         self.pause_to_run()
+
     def reset(self):
         self.ball_group = pg.sprite.GroupSingle()
         self.player.reset()
