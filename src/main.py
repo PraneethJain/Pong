@@ -17,6 +17,7 @@ class Game:
         self.scene = Scene.main_menu
         self.create_main_menu()
         self.create_pause_menu()
+        self.create_settings_menu()
         self.all_sprites = pg.sprite.Group()
         self.players_group = pg.sprite.Group()
         self.ball_group = pg.sprite.GroupSingle()
@@ -82,6 +83,9 @@ class Game:
                     
                 case Scene.game_over:
                     self.game_over()
+                    
+                case Scene.settings_menu:
+                    self.settings_menu()
 
             self.clock.tick(self.FPS)
             pg.display.update()
@@ -111,15 +115,20 @@ class Game:
             self.scene = Scene.settings_menu
             
         if self.exit_button.pressed:
-            pg.quit()
-            sys.exit()
+            self.quit()
         
         if self.source_link.pressed:
             webbrowser.open("https://github.com/PraneethJain/Pong")
             pg.time.delay(250)
     
+    def create_settings_menu(self):
+        pass
+    
+    def settings_menu(self):
+        self.screen.fill((0, 128, 128))
+    
     def pause_to_run(self):
-        for alpha in range(200):
+        for alpha in range(255):
             self.current_screen.set_alpha(alpha)
             self.screen.blit(self.current_screen, (0,0))
             pg.display.update()
@@ -155,24 +164,43 @@ class Game:
             self.player_score.update(self.score_player)
             self.computer_score.update(self.score_computer)
             self.scene = Scene.run
+            
     def create_pause_menu(self):
-        pass
+        self.pause_resume_button = Button("Resume", (SCREEN_WIDTH//2, SCREEN_HEIGHT//3), (83, 179, 203))
+        self.pause_settings_button = Button("Settings", (SCREEN_WIDTH//2, SCREEN_HEIGHT//2), (83, 179, 203))
+        self.pause_exit_button = Button("Exit", (SCREEN_WIDTH//2, 2*SCREEN_HEIGHT//3), (83, 179, 203))
+        self.paused_surf = imports.ape_font.render("Paused", True, (224, 26, 79)) 
         
     def run_to_pause(self):
         self.pause_bg_alpha=0
         self.scene = Scene.pause_menu
         
     def pause_menu(self):
-        if self.pause_bg_alpha<255:
+        if self.pause_bg_alpha<=100:
             imports.pause_bg.set_alpha(self.pause_bg_alpha)
             self.pause_bg_alpha+=1
-        self.screen.blit(imports.pause_bg, (0, 0))
+            self.screen.blit(imports.pause_bg, (0, 0))  
+        elif self.pause_bg_alpha>100:
+            self.screen.blit(imports.pause_bg, (0, 0))
+            self.screen.blit(self.paused_surf, (SCREEN_WIDTH/2 - self.paused_surf.get_width()/2, SCREEN_HEIGHT/20))
+            
+            self.pause_resume_button.update(self.screen)
+            self.pause_settings_button.update(self.screen)
+            self.pause_exit_button.update(self.screen)
+            
+            if self.pause_resume_button.pressed:
+                self.pause_to_run()
+            
+            if self.pause_settings_button.pressed:
+                self.scene = Scene.settings_menu
+            
+            if self.pause_exit_button.pressed:
+                self.quit()
         
     def handle_events(self, events: list[pg.event.Event]):
         for event in events:
             if event.type == pg.QUIT:
-                pg.quit()
-                sys.exit()
+                self.quit()
                 
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
@@ -186,6 +214,10 @@ class Game:
         self.player.reset()
         self.computer.reset()
         self.ball.__init__()
+        
+    def quit(self):
+        pg.quit()
+        sys.exit()
                 
 if __name__ == "__main__":
     game = Game()
