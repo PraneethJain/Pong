@@ -17,7 +17,8 @@ class Game:
         self.scene = Scene.main_menu
         self.create_main_menu()
         self.create_pause_menu()
-        self.create_settings_menu()
+        self.create_main_settings_menu()
+        self.create_pause_settings_menu()
         self.all_sprites = pg.sprite.Group()
         self.players_group = pg.sprite.Group()
         self.ball_group = pg.sprite.GroupSingle()
@@ -84,9 +85,12 @@ class Game:
                 case Scene.game_over:
                     self.game_over()
                     
-                case Scene.settings_menu:
-                    self.settings_menu()
+                case Scene.main_settings_menu:
+                    self.main_settings_menu()
 
+                case Scene.pause_settings_menu:
+                    self.pause_settings_menu()
+                    
             self.clock.tick(self.FPS)
             pg.display.update()
 
@@ -112,7 +116,7 @@ class Game:
             pg.time.delay(250)
             
         if self.settings_button.pressed:
-            self.scene = Scene.settings_menu
+            self.scene = Scene.main_settings_menu
             
         if self.exit_button.pressed:
             self.quit()
@@ -121,11 +125,17 @@ class Game:
             webbrowser.open("https://github.com/PraneethJain/Pong")
             pg.time.delay(250)
     
-    def create_settings_menu(self):
+    def create_main_settings_menu(self):
         pass
     
-    def settings_menu(self):
-        self.screen.fill((0, 128, 128))
+    def main_settings_menu(self):
+        self.screen.blit(imports.main_bg, (0, 0))
+        
+    def create_pause_settings_menu(self):
+        pass
+    
+    def pause_settings_menu(self):
+        self.screen.blit(imports.pause_bg, (0, 0))
     
     def pause_to_run(self):
         for alpha in range(255):
@@ -177,10 +187,13 @@ class Game:
         
     def pause_menu(self):
         if self.pause_bg_alpha<=100:
+            
             imports.pause_bg.set_alpha(self.pause_bg_alpha)
             self.pause_bg_alpha+=1
             self.screen.blit(imports.pause_bg, (0, 0))  
+            
         elif self.pause_bg_alpha>100:
+            
             self.screen.blit(imports.pause_bg, (0, 0))
             self.screen.blit(self.paused_surf, (SCREEN_WIDTH/2 - self.paused_surf.get_width()/2, SCREEN_HEIGHT/20))
             
@@ -192,7 +205,7 @@ class Game:
                 self.pause_to_run()
             
             if self.pause_settings_button.pressed:
-                self.scene = Scene.settings_menu
+                self.scene = Scene.pause_settings_menu
             
             if self.pause_exit_button.pressed:
                 self.quit()

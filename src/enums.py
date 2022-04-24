@@ -5,4 +5,5 @@ class Scene(Enum):
     run = 2
     pause_menu = 3
     game_over = 4
-    settings_menu = 5
+    main_settings_menu = 5
+    pause_settings_menu = 6
