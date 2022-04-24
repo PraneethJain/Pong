@@ -13,12 +13,21 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
+
+
 screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+
+# Images
 icon = pg.image.load(resource_path("assets/images/pong.png"))
 ball = pg.image.load(resource_path("assets/images/ball.png"))
+
+# Backgrounds
 main_bg = pg.image.load(resource_path("assets/images/main_bg.jpg")).convert()
 pause_bg = pg.image.load(resource_path("assets/images/pause_bg.jpg")).convert()
 over_bg = pg.image.load(resource_path("assets/images/over_bg.jpg")).convert()
+
+# Fonts
 roboto = pg.font.Font(resource_path("assets/fonts/Roboto-Bold.ttf"), int(40*SCREEN_WIDTH/1280))
 roboto_large = pg.font.Font(resource_path("assets/fonts/Roboto-Bold.ttf"), int(100*SCREEN_WIDTH/1280))
 roboto_light = pg.font.Font(resource_path("assets/fonts/Roboto-Regular.ttf"), int(20*SCREEN_WIDTH/1280))
