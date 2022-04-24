@@ -9,8 +9,8 @@ import imports
 import sys
 import webbrowser
 
-class Game:
 
+class Game:
     def __init__(self):
         pg.display.set_caption("Pong")
         pg.display.set_icon(imports.icon)
@@ -23,9 +23,15 @@ class Game:
         self.players_group = pg.sprite.Group()
         self.ball_group = pg.sprite.GroupSingle()
         self.scores = pg.sprite.Group()
-        self.player = Player((SCREEN_WIDTH/50, SCREEN_HEIGHT/2), self.players_group, self.all_sprites)
-        self.computer = Computer((49*SCREEN_WIDTH/50, SCREEN_HEIGHT/2), self.players_group, self.all_sprites)
-        self.player_score = Score(True,self.scores)
+        self.player = Player(
+            (SCREEN_WIDTH / 50, SCREEN_HEIGHT / 2), self.players_group, self.all_sprites
+        )
+        self.computer = Computer(
+            (49 * SCREEN_WIDTH / 50, SCREEN_HEIGHT / 2),
+            self.players_group,
+            self.all_sprites,
+        )
+        self.player_score = Score(True, self.scores)
         self.computer_score = Score(False, self.scores)
         self.ball = Ball(self.ball_group, self.all_sprites)
         self.screen = imports.screen
@@ -50,7 +56,7 @@ class Game:
             pg.time.delay(250)
             self.reset()
 
-        if self.ball.rect.left <=0:
+        if self.ball.rect.left <= 0:
             self.score_computer += 1
             # self.player.enlarge()
             self.computer_score.update(self.score_computer)
@@ -95,17 +101,29 @@ class Game:
             pg.display.update()
 
     def create_main_menu(self):
-        self.play_button = Button("Play", (SCREEN_WIDTH//2, SCREEN_HEIGHT//3), (17, 138, 178))
-        self.settings_button = Button("Settings", (SCREEN_WIDTH//2, SCREEN_HEIGHT//2), (17, 138, 178))
-        self.exit_button = Button("Exit", (SCREEN_WIDTH//2, 2*SCREEN_HEIGHT//3), (17, 138, 178))
-        self.source_link = Link("https://github.com/PraneethJain/Pong", bottomright=(SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.play_button = Button(
+            "Play", (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3), (17, 138, 178)
+        )
+        self.settings_button = Button(
+            "Settings", (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), (17, 138, 178)
+        )
+        self.exit_button = Button(
+            "Exit", (SCREEN_WIDTH // 2, 2 * SCREEN_HEIGHT // 3), (17, 138, 178)
+        )
+        self.source_link = Link(
+            "https://github.com/PraneethJain/Pong",
+            bottomright=(SCREEN_WIDTH, SCREEN_HEIGHT),
+        )
         self.title = imports.ape_font.render("Pong!", True, (239, 71, 111))
         self.version = imports.roboto_light.render(f"V{imports.VERSION}", True, "white")
 
     def main_menu(self):
         self.screen.blit(imports.main_bg, (0, 0))
-        self.screen.blit(self.title, (SCREEN_WIDTH//2-self.title.get_width()//2, SCREEN_HEIGHT//10))
-        self.screen.blit(self.version, (0, SCREEN_HEIGHT-self.version.get_height()))
+        self.screen.blit(
+            self.title,
+            (SCREEN_WIDTH // 2 - self.title.get_width() // 2, SCREEN_HEIGHT // 10),
+        )
+        self.screen.blit(self.version, (0, SCREEN_HEIGHT - self.version.get_height()))
         self.source_link.update(self.screen)
         self.play_button.update(self.screen)
         self.settings_button.update(self.screen)
@@ -140,7 +158,7 @@ class Game:
     def pause_to_run(self):
         for alpha in range(255):
             self.current_screen.set_alpha(alpha)
-            self.screen.blit(self.current_screen, (0,0))
+            self.screen.blit(self.current_screen, (0, 0))
             pg.display.update()
         self.scene = Scene.run
 
@@ -148,7 +166,12 @@ class Game:
         self.screen.fill("black")
         self.scores.draw(self.screen)
 
-        pg.draw.line(self.screen, "white", (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT))
+        pg.draw.line(
+            self.screen,
+            "white",
+            (SCREEN_WIDTH / 2, 0),
+            (SCREEN_WIDTH / 2, SCREEN_HEIGHT),
+        )
         self.all_sprites.update()
         self.collide_check()
         self.score()
@@ -156,16 +179,35 @@ class Game:
         self.all_sprites.draw(self.screen)
 
     def create_game_over(self):
-        self.over_surf = imports.thorn_font.render(f"You {self.status}", True, (164, 22, 26))
+        self.over_surf = imports.thorn_font.render(
+            f"You {self.status}", True, (164, 22, 26)
+        )
         self.score_title = imports.roboto.render("Score", True, (229, 229, 229))
-        self.score_surf = imports.roboto.render(f"{self.score_player} - {self.score_computer}", True, (229, 229, 229))
+        self.score_surf = imports.roboto.render(
+            f"{self.score_player} - {self.score_computer}", True, (229, 229, 229)
+        )
         self.restart_button = Button("Restart", color=(252, 163, 17))
 
     def game_over(self):
         self.screen.blit(imports.over_bg, (0, 0))
-        self.screen.blit(self.over_surf, (SCREEN_WIDTH/2-self.over_surf.get_width()/2, SCREEN_HEIGHT/20))
-        self.screen.blit(self.score_title, (SCREEN_WIDTH/2-self.score_title.get_width()/2, 14*SCREEN_HEIGHT/20))
-        self.screen.blit(self.score_surf, (SCREEN_WIDTH/2 - self.score_surf.get_width()/2, 16*SCREEN_HEIGHT/20))
+        self.screen.blit(
+            self.over_surf,
+            (SCREEN_WIDTH / 2 - self.over_surf.get_width() / 2, SCREEN_HEIGHT / 20),
+        )
+        self.screen.blit(
+            self.score_title,
+            (
+                SCREEN_WIDTH / 2 - self.score_title.get_width() / 2,
+                14 * SCREEN_HEIGHT / 20,
+            ),
+        )
+        self.screen.blit(
+            self.score_surf,
+            (
+                SCREEN_WIDTH / 2 - self.score_surf.get_width() / 2,
+                16 * SCREEN_HEIGHT / 20,
+            ),
+        )
         self.restart_button.update(self.screen)
         if self.restart_button.pressed:
             self.reset()
@@ -176,26 +218,38 @@ class Game:
             self.scene = Scene.run
 
     def create_pause_menu(self):
-        self.pause_resume_button = Button("Resume", (SCREEN_WIDTH//2, SCREEN_HEIGHT//3), (83, 179, 203))
-        self.pause_settings_button = Button("Settings", (SCREEN_WIDTH//2, SCREEN_HEIGHT//2), (83, 179, 203))
-        self.pause_exit_button = Button("Exit", (SCREEN_WIDTH//2, 2*SCREEN_HEIGHT//3), (83, 179, 203))
+        self.pause_resume_button = Button(
+            "Resume", (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3), (83, 179, 203)
+        )
+        self.pause_settings_button = Button(
+            "Settings", (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), (83, 179, 203)
+        )
+        self.pause_exit_button = Button(
+            "Exit", (SCREEN_WIDTH // 2, 2 * SCREEN_HEIGHT // 3), (83, 179, 203)
+        )
         self.paused_surf = imports.ape_font.render("Paused", True, (224, 26, 79))
 
     def run_to_pause(self):
-        self.pause_bg_alpha=0
+        self.pause_bg_alpha = 0
         self.scene = Scene.pause_menu
 
     def pause_menu(self):
-        if self.pause_bg_alpha<=100:
+        if self.pause_bg_alpha <= 100:
 
             imports.pause_bg.set_alpha(self.pause_bg_alpha)
-            self.pause_bg_alpha+=1
+            self.pause_bg_alpha += 1
             self.screen.blit(imports.pause_bg, (0, 0))
 
-        elif self.pause_bg_alpha>100:
+        elif self.pause_bg_alpha > 100:
 
             self.screen.blit(imports.pause_bg, (0, 0))
-            self.screen.blit(self.paused_surf, (SCREEN_WIDTH/2 - self.paused_surf.get_width()/2, SCREEN_HEIGHT/20))
+            self.screen.blit(
+                self.paused_surf,
+                (
+                    SCREEN_WIDTH / 2 - self.paused_surf.get_width() / 2,
+                    SCREEN_HEIGHT / 20,
+                ),
+            )
 
             self.pause_resume_button.update(self.screen)
             self.pause_settings_button.update(self.screen)
@@ -232,6 +286,7 @@ class Game:
     def quit(self):
         pg.quit()
         sys.exit()
+
 
 if __name__ == "__main__":
     game = Game()

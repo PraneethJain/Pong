@@ -6,6 +6,7 @@ import os
 pg.init()
 pg.mixer.init()
 
+
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
@@ -28,9 +29,21 @@ pause_bg = pg.image.load(resource_path("assets/images/pause_bg.jpg")).convert()
 over_bg = pg.image.load(resource_path("assets/images/over_bg.jpg")).convert()
 
 # Fonts
-roboto = pg.font.Font(resource_path("assets/fonts/Roboto-Bold.ttf"), int(40*SCREEN_WIDTH/1280))
-roboto_large = pg.font.Font(resource_path("assets/fonts/Roboto-Bold.ttf"), int(100*SCREEN_WIDTH/1280))
-roboto_light = pg.font.Font(resource_path("assets/fonts/Roboto-Regular.ttf"), int(20*SCREEN_WIDTH/1280))
-ape_font = pg.font.Font(resource_path("assets/fonts/Ape.ttf"), int(80*SCREEN_WIDTH/1280))
-adistro_font = pg.font.Font(resource_path("assets/fonts/Adistro.ttf"), int(60*SCREEN_WIDTH/1280))
-thorn_font = pg.font.Font(resource_path("assets/fonts/Thorn.ttf"), int(100*SCREEN_WIDTH/1280))
+roboto = pg.font.Font(
+    resource_path("assets/fonts/Roboto-Bold.ttf"), int(40 * SCREEN_WIDTH / 1280)
+)
+roboto_large = pg.font.Font(
+    resource_path("assets/fonts/Roboto-Bold.ttf"), int(100 * SCREEN_WIDTH / 1280)
+)
+roboto_light = pg.font.Font(
+    resource_path("assets/fonts/Roboto-Regular.ttf"), int(20 * SCREEN_WIDTH / 1280)
+)
+ape_font = pg.font.Font(
+    resource_path("assets/fonts/Ape.ttf"), int(80 * SCREEN_WIDTH / 1280)
+)
+adistro_font = pg.font.Font(
+    resource_path("assets/fonts/Adistro.ttf"), int(60 * SCREEN_WIDTH / 1280)
+)
+thorn_font = pg.font.Font(
+    resource_path("assets/fonts/Thorn.ttf"), int(100 * SCREEN_WIDTH / 1280)
+)

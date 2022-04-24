@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Scene(Enum):
     main_menu = 1
     run = 2
