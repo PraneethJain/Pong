@@ -55,11 +55,11 @@ class Game:
             pg.time.delay(250)
             self.reset()
             
-        if self.score_player == 1:
+        if self.score_player == 5:
             self.status = "win"
             self.create_game_over()
             self.scene = Scene.game_over
-        elif self.score_computer == 1:
+        elif self.score_computer == 5:
             self.status = "lose"
             self.create_game_over()
             self.scene = Scene.game_over
@@ -137,13 +137,13 @@ class Game:
         self.all_sprites.draw(self.screen)
     
     def create_game_over(self):
-        self.over_surf = imports.thorn_font.render(f"You {self.status}", True, (204, 255, 255))
-        self.score_title = imports.roboto.render("Score", True, (255, 255, 255))
-        self.score_surf = imports.roboto.render(f"{self.score_player}-{self.score_computer}", True, (255, 255, 255))
-        self.restart_button = Button("Restart", color="white")
+        self.over_surf = imports.thorn_font.render(f"You {self.status}", True, (164, 22, 26))
+        self.score_title = imports.roboto.render("Score", True, (229, 229, 229))
+        self.score_surf = imports.roboto.render(f"{self.score_player}-{self.score_computer}", True, (229, 229, 229))
+        self.restart_button = Button("Restart", color=(252, 163, 17))
     
     def game_over(self):
-        self.screen.fill("black")
+        self.screen.blit(imports.over_bg, (0, 0))
         self.screen.blit(self.over_surf, (SCREEN_WIDTH/2-self.over_surf.get_width()/2, SCREEN_HEIGHT/20))
         self.screen.blit(self.score_title, (SCREEN_WIDTH/2-self.score_title.get_width()/2, 14*SCREEN_HEIGHT/20))
         self.screen.blit(self.score_surf, (SCREEN_WIDTH/2 - self.score_surf.get_width()/2, 16*SCREEN_HEIGHT/20))
