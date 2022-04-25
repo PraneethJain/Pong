@@ -32,6 +32,9 @@ over_bg = pg.image.load(resource_path("assets/images/over_bg.jpg")).convert()
 roboto = pg.font.Font(
     resource_path("assets/fonts/Roboto-Bold.ttf"), int(40 * SCREEN_WIDTH / 1280)
 )
+roboto_small = pg.font.Font(
+    resource_path("assets/fonts/Roboto-Bold.ttf"), int(20 * SCREEN_WIDTH / 1280)
+)
 roboto_large = pg.font.Font(
     resource_path("assets/fonts/Roboto-Bold.ttf"), int(100 * SCREEN_WIDTH / 1280)
 )
@@ -52,6 +55,7 @@ thorn_font = pg.font.Font(
 hit_sound = pg.mixer.Sound(resource_path("assets/sounds/hit.wav"))
 score_sound = pg.mixer.Sound(resource_path("assets/sounds/score.wav"))
 comp_score_sound = pg.mixer.Sound(resource_path("assets/sounds/comp_score.wav"))
+sounds = [hit_sound, score_sound, comp_score_sound]
 
 # Music
 bg_music = pg.mixer.music.load(resource_path("assets/sounds/background.wav"))

@@ -2,6 +2,7 @@ from settings import *
 from stick import Player, Computer
 from ball import Ball
 from button import Button, Link
+from slider import Slider
 from scores import Score
 from enums import Scene
 import pygame as pg
@@ -40,8 +41,9 @@ class Game:
         self.score_player = 0
         self.score_computer = 0
         self.bg_volume = 100
+        self.bg_sound = 100
         pg.mixer.music.play(-1)
-        pg.mixer.music.set_volume(VOLUME/100)
+        pg.mixer.music.set_volume(self.bg_sound / 100)
 
     def collide_check(self):
         if pg.sprite.spritecollideany(self.ball, self.players_group):
@@ -76,6 +78,9 @@ class Game:
             self.create_game_over()
             self.scene = Scene.game_over
 
+    def update_volume(self):
+        pg.mixer.music.set_volume(self.bg_volume / 100 * self.bg_sound / 100)
+
     def scene_manager(self):
         while True:
 
@@ -86,28 +91,28 @@ class Game:
                 case Scene.main_menu:
                     if self.bg_volume < 100:
                         self.bg_volume += 1
-                        pg.mixer.music.set_volume(self.bg_volume / 100 * VOLUME/100)
+                        self.update_volume()
                     self.main_menu()
 
                 case Scene.run:
                     if self.bg_volume > 50:
                         self.bg_volume -= 1
-                        pg.mixer.music.set_volume(self.bg_volume / 100 * VOLUME/100)
+                        self.update_volume()
                     if self.bg_volume < 50:
                         self.bg_volume += 1
-                        pg.mixer.music.set_volume(self.bg_volume / 100 * VOLUME/100)
+                        self.update_volume()
                     self.run()
 
                 case Scene.pause_menu:
                     if self.bg_volume < 100:
                         self.bg_volume += 1
-                        pg.mixer.music.set_volume(self.bg_volume / 100 * VOLUME/100)
+                        self.update_volume()
                     self.pause_menu()
 
                 case Scene.game_over:
                     if self.bg_volume > 0:
                         self.bg_volume -= 1
-                        pg.mixer.music.set_volume(self.bg_volume / 100 * VOLUME/100)
+                        self.update_volume()
                     self.game_over()
 
                 case Scene.main_settings_menu:
@@ -161,17 +166,138 @@ class Game:
             webbrowser.open("https://github.com/PraneethJain/Pong")
             pg.time.delay(250)
 
+    @staticmethod
+    def sound_effect_volume(volume):
+        for sound in imports.sounds:
+            sound.set_volume(volume / 100)
+
     def create_main_settings_menu(self):
-        pass
+        self.volume_surf = imports.roboto_small.render(
+            "Background music", True, (193, 121, 2)
+        )
+        self.volume_slider = Slider(250, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3))
+        self.volume_percent_surf = imports.roboto_small.render(
+            f"{self.volume_slider.current}", True, (193, 121, 2)
+        )
+        self.sound_surf = imports.roboto_small.render(
+            "Sound effects", True, (193, 121, 2)
+        )
+        self.sound_slider = Slider(250, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+        self.sound_percent_surf = imports.roboto_small.render(
+            f"{self.sound_slider.current}", True, (193, 121, 2)
+        )
+        self.go_back_button = Button(
+            "Go back", (SCREEN_WIDTH / 2, 2 * SCREEN_HEIGHT / 3), (193, 121, 2)
+        )
 
     def main_settings_menu(self):
+
         self.screen.blit(imports.main_bg, (0, 0))
+        # Background Volume Slider
+        self.screen.blit(
+            self.volume_surf,
+            (
+                self.volume_slider.rect.left - self.volume_surf.get_width() - 10,
+                SCREEN_HEIGHT / 3 - self.volume_surf.get_height() / 2,
+            ),
+        )
+        self.screen.blit(
+            self.volume_percent_surf,
+            (
+                self.volume_slider.rect.right + 10,
+                SCREEN_HEIGHT / 3 - self.volume_percent_surf.get_height() / 2,
+            ),
+        )
+        self.volume_slider.update()
+        if self.volume_slider.pressed:
+            self.bg_sound = self.volume_slider.current
+            self.update_volume()
+            self.volume_percent_surf = imports.roboto_small.render(
+                f"{self.volume_slider.current}", True, (193, 121, 2)
+            )
+
+        # Sound Effects Slider
+        self.screen.blit(
+            self.sound_surf,
+            (
+                self.sound_slider.rect.left - self.sound_surf.get_width() - 10,
+                SCREEN_HEIGHT / 2 - self.sound_surf.get_height() / 2,
+            ),
+        )
+        self.screen.blit(
+            self.sound_percent_surf,
+            (
+                self.sound_slider.rect.right + 10,
+                SCREEN_HEIGHT / 2 - self.sound_percent_surf.get_height() / 2,
+            ),
+        )
+        self.sound_slider.update()
+        if self.sound_slider.pressed:
+            self.sound_effect_volume(self.sound_slider.current)
+            self.sound_percent_surf = imports.roboto_small.render(
+                f"{self.sound_slider.current}", True, (193, 121, 2)
+            )
+
+        # Go Back Button
+        self.go_back_button.update(self.screen)
+        if self.go_back_button.pressed:
+            self.scene = Scene.main_menu
+            pg.time.delay(100)
 
     def create_pause_settings_menu(self):
         pass
 
     def pause_settings_menu(self):
         self.screen.blit(imports.pause_bg, (0, 0))
+        self.screen.blit(
+            self.volume_surf,
+            (
+                self.volume_slider.rect.left - self.volume_surf.get_width() - 10,
+                SCREEN_HEIGHT / 3 - self.volume_surf.get_height() / 2,
+            ),
+        )
+        self.screen.blit(
+            self.volume_percent_surf,
+            (
+                self.volume_slider.rect.right + 10,
+                SCREEN_HEIGHT / 3 - self.volume_percent_surf.get_height() / 2,
+            ),
+        )
+        self.volume_slider.update()
+        if self.volume_slider.pressed:
+            self.bg_sound = self.volume_slider.current
+            self.update_volume()
+            self.volume_percent_surf = imports.roboto_small.render(
+                f"{self.volume_slider.current}", True, (193, 121, 2)
+            )
+
+        # Sound Effects Slider
+        self.screen.blit(
+            self.sound_surf,
+            (
+                self.sound_slider.rect.left - self.sound_surf.get_width() - 10,
+                SCREEN_HEIGHT / 2 - self.sound_surf.get_height() / 2,
+            ),
+        )
+        self.screen.blit(
+            self.sound_percent_surf,
+            (
+                self.sound_slider.rect.right + 10,
+                SCREEN_HEIGHT / 2 - self.sound_percent_surf.get_height() / 2,
+            ),
+        )
+        self.sound_slider.update()
+        if self.sound_slider.pressed:
+            self.sound_effect_volume(self.sound_slider.current)
+            self.sound_percent_surf = imports.roboto_small.render(
+                f"{self.sound_slider.current}", True, (193, 121, 2)
+            )
+
+        # Go Back Button
+        self.go_back_button.update(self.screen)
+        if self.go_back_button.pressed:
+            self.scene = Scene.pause_menu
+            pg.time.delay(75)
 
     def pause_to_run(self):
         for alpha in range(255):
