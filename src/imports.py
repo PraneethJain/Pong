@@ -47,3 +47,11 @@ adistro_font = pg.font.Font(
 thorn_font = pg.font.Font(
     resource_path("assets/fonts/Thorn.ttf"), int(100 * SCREEN_WIDTH / 1280)
 )
+
+# Sounds
+hit_sound = pg.mixer.Sound(resource_path("assets/sounds/hit.wav"))
+score_sound = pg.mixer.Sound(resource_path("assets/sounds/score.wav"))
+comp_score_sound = pg.mixer.Sound(resource_path("assets/sounds/comp_score.wav"))
+
+# Music
+bg_music = pg.mixer.music.load(resource_path("assets/sounds/background.wav"))

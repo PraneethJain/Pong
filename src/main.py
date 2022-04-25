@@ -39,6 +39,8 @@ class Game:
         self.FPS = FPS
         self.score_player = 0
         self.score_computer = 0
+        self.bg_volume = 100
+        pg.mixer.music.play(-1)
 
     def collide_check(self):
         if pg.sprite.spritecollideany(self.ball, self.players_group):
@@ -46,19 +48,20 @@ class Game:
                 self.ball.velocity.x += FORCE
             else:
                 self.ball.velocity.x -= FORCE
+            imports.hit_sound.play()
             self.ball.velocity.x *= -1
 
     def score(self):
         if self.ball.rect.right >= SCREEN_WIDTH:
             self.score_player += 1
-            # self.computer.enlarge()
+            imports.score_sound.play()
             self.player_score.update(self.score_player)
             pg.time.delay(250)
             self.reset()
 
         if self.ball.rect.left <= 0:
             self.score_computer += 1
-            # self.player.enlarge()
+            imports.comp_score_sound.play()
             self.computer_score.update(self.score_computer)
             pg.time.delay(250)
             self.reset()
@@ -80,15 +83,30 @@ class Game:
             match self.scene:
 
                 case Scene.main_menu:
+                    if self.bg_volume < 100:
+                        self.bg_volume += 1
+                        pg.mixer.music.set_volume(self.bg_volume / 100)
                     self.main_menu()
 
                 case Scene.run:
+                    if self.bg_volume > 50:
+                        self.bg_volume -= 1
+                        pg.mixer.music.set_volume(self.bg_volume / 100)
+                    if self.bg_volume < 50:
+                        self.bg_volume += 1
+                        pg.mixer.music.set_volume(self.bg_volume / 100)
                     self.run()
 
                 case Scene.pause_menu:
+                    if self.bg_volume < 100:
+                        self.bg_volume += 1
+                        pg.mixer.music.set_volume(self.bg_volume / 100)
                     self.pause_menu()
 
                 case Scene.game_over:
+                    if self.bg_volume > 0:
+                        self.bg_volume -= 1
+                        pg.mixer.music.set_volume(self.bg_volume / 100)
                     self.game_over()
 
                 case Scene.main_settings_menu:
@@ -131,7 +149,6 @@ class Game:
 
         if self.play_button.pressed:
             self.scene = Scene.run
-            pg.time.delay(250)
 
         if self.settings_button.pressed:
             self.scene = Scene.main_settings_menu
