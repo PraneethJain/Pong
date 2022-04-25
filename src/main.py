@@ -41,6 +41,7 @@ class Game:
         self.score_computer = 0
         self.bg_volume = 100
         pg.mixer.music.play(-1)
+        pg.mixer.music.set_volume(VOLUME/100)
 
     def collide_check(self):
         if pg.sprite.spritecollideany(self.ball, self.players_group):
@@ -85,28 +86,28 @@ class Game:
                 case Scene.main_menu:
                     if self.bg_volume < 100:
                         self.bg_volume += 1
-                        pg.mixer.music.set_volume(self.bg_volume / 100)
+                        pg.mixer.music.set_volume(self.bg_volume / 100 * VOLUME/100)
                     self.main_menu()
 
                 case Scene.run:
                     if self.bg_volume > 50:
                         self.bg_volume -= 1
-                        pg.mixer.music.set_volume(self.bg_volume / 100)
+                        pg.mixer.music.set_volume(self.bg_volume / 100 * VOLUME/100)
                     if self.bg_volume < 50:
                         self.bg_volume += 1
-                        pg.mixer.music.set_volume(self.bg_volume / 100)
+                        pg.mixer.music.set_volume(self.bg_volume / 100 * VOLUME/100)
                     self.run()
 
                 case Scene.pause_menu:
                     if self.bg_volume < 100:
                         self.bg_volume += 1
-                        pg.mixer.music.set_volume(self.bg_volume / 100)
+                        pg.mixer.music.set_volume(self.bg_volume / 100 * VOLUME/100)
                     self.pause_menu()
 
                 case Scene.game_over:
                     if self.bg_volume > 0:
                         self.bg_volume -= 1
-                        pg.mixer.music.set_volume(self.bg_volume / 100)
+                        pg.mixer.music.set_volume(self.bg_volume / 100 * VOLUME/100)
                     self.game_over()
 
                 case Scene.main_settings_menu:
