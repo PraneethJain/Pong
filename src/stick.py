@@ -21,8 +21,7 @@ class Stick(pg.sprite.Sprite):
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
 
-    def enlarge(self):
-        scale_factor = 1.1
+    def enlarge(self, scale_factor=1.1):
         self.image = pg.Surface(
             (self.image.get_width(), self.image.get_height() * scale_factor)
         )
@@ -30,6 +29,14 @@ class Stick(pg.sprite.Sprite):
         old_center = self.rect.center
         self.rect.h *= scale_factor
         self.rect.center = old_center
+
+    def speed_up(self, increment=0.5):
+        self.speed += increment
+
+    def unenlarge(self):
+        self.image = pg.Surface((SCREEN_WIDTH / 54, SCREEN_HEIGHT / 6))
+        self.image.fill((255, 255, 255))
+        self.rect = self.image.get_rect()
 
 
 class Player(Stick):

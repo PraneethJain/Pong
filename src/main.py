@@ -34,6 +34,11 @@ class Game:
         )
         self.player_score = Score(True, self.scores)
         self.computer_score = Score(False, self.scores)
+        self.round = 1
+        self.round_surf = imports.roboto.render(
+            f"Round {self.round}", True, (255, 255, 255)
+        )
+        self.points = 0
         self.ball = Ball(self.ball_group, self.all_sprites)
         self.screen = imports.screen
         self.clock = pg.time.Clock()
@@ -57,26 +62,38 @@ class Game:
     def score(self):
         if self.ball.rect.right >= SCREEN_WIDTH:
             self.score_player += 1
+            self.computer.enlarge(1.1)
             imports.score_sound.play()
             self.player_score.update(self.score_player)
             pg.time.delay(250)
+            self.points += self.round * 10
+            if self.score_player == SCORE_TO_WIN:
+                self.round += 1
+                self.update_round()
+                self.score_player = 0
+                self.score_computer = 0
+                self.player_score.update(self.score_player)
+                self.computer_score.update(self.score_computer)
+                self.computer.unenlarge()
+                self.computer.speed_up(1)
             self.reset()
 
         if self.ball.rect.left <= 0:
             self.score_computer += 1
             imports.comp_score_sound.play()
             self.computer_score.update(self.score_computer)
-            pg.time.delay(250)
             self.reset()
+            if self.score_computer == SCORE_TO_WIN:
+                self.round = 1
+                self.update_round()
+                self.create_game_over()
+                self.scene = Scene.game_over
+            pg.time.delay(250)
 
-        if self.score_player == SCORE_TO_WIN:
-            self.status = "win"
-            self.create_game_over()
-            self.scene = Scene.game_over
-        elif self.score_computer == SCORE_TO_WIN:
-            self.status = "lose"
-            self.create_game_over()
-            self.scene = Scene.game_over
+    def update_round(self):
+        self.round_surf = imports.roboto.render(
+            f"Round {self.round}", True, (255, 255, 255)
+        )
 
     def update_volume(self):
         pg.mixer.music.set_volume(self.bg_volume / 100 * self.bg_sound / 100)
@@ -296,8 +313,8 @@ class Game:
         # Go Back Button
         self.go_back_button.update(self.screen)
         if self.go_back_button.pressed:
+            pg.time.delay(100)
             self.scene = Scene.pause_menu
-            pg.time.delay(75)
 
     def pause_to_run(self):
         for alpha in range(255):
@@ -316,6 +333,11 @@ class Game:
             (SCREEN_WIDTH / 2, 0),
             (SCREEN_WIDTH / 2, SCREEN_HEIGHT),
         )
+
+        self.screen.blit(
+            self.round_surf, (SCREEN_WIDTH - self.round_surf.get_width(), 0)
+        )
+
         self.all_sprites.update()
         self.collide_check()
         self.score()
@@ -323,13 +345,9 @@ class Game:
         self.all_sprites.draw(self.screen)
 
     def create_game_over(self):
-        self.over_surf = imports.thorn_font.render(
-            f"You {self.status}", True, (164, 22, 26)
-        )
+        self.over_surf = imports.thorn_font.render(f"You Lose", True, (164, 22, 26))
         self.score_title = imports.roboto.render("Score", True, (229, 229, 229))
-        self.score_surf = imports.roboto.render(
-            f"{self.score_player} - {self.score_computer}", True, (229, 229, 229)
-        )
+        self.score_surf = imports.roboto.render(f"{self.points}", True, (229, 229, 229))
         self.restart_button = Button("Restart", color=(252, 163, 17))
 
     def game_over(self):
@@ -422,10 +440,10 @@ class Game:
                         self.pause_to_run()
 
     def reset(self):
-        self.ball_group = pg.sprite.GroupSingle()
+        self.ball.kill()
         self.player.reset()
         self.computer.reset()
-        self.ball.__init__()
+        self.ball = Ball(self.all_sprites, self.ball_group)
 
     def quit(self):
         pg.quit()
